@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <main id="app">
     <CommentsFeed />
-  </div>
+  </main>
 </template>
 
 <script>
@@ -29,9 +29,10 @@ body {
 #app {
   min-height: 100vh;
   padding-top: 40px;
-  background-color: #e1ede6;
+  background-color: $background;
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Montserrat', sans-serif;
 }
 </style>
