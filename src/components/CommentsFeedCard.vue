@@ -56,7 +56,7 @@ export default {
 .username {
   color: $primary;
   font-size: 1.1rem;
-  padding: 8px 0;
+  padding-bottom: 12px;
 }
 .time {
   font-size: 0.9rem;
