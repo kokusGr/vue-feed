@@ -2,8 +2,10 @@
   <CommentsFeedCardContainer>
     <div class="input-container">
       <CommentsFeedAvatar :url="user.avatar" :alt="fullName" />
-      <TextareaAutosize class="input" :max-height="200" />
-      <button class="button" type="submit">Opublikuj</button>
+      <TextareaAutosize v-model="newComment" class="input" :max-height="200" />
+      <button @click="handleSubmit" class="button">
+        Opublikuj
+      </button>
     </div>
   </CommentsFeedCardContainer>
 </template>
@@ -31,9 +33,20 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      newComment: '',
+    }
+  },
   computed: {
     fullName: function getFullName() {
       return `${this.user.firstName} ${this.user.lastName}`
+    },
+  },
+  methods: {
+    handleSubmit() {
+      this.$emit('submit', { comment: this.newComment, author: this.user })
+      this.newComment = ''
     },
   },
 }

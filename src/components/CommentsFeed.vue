@@ -7,13 +7,17 @@
       :class="{ 'with-margin': index !== comments.length - 1 }"
     />
     <div class="spacer"></div>
-    <CommentsFeedInput :user="currentUser" />
+    <CommentsFeedInput :user="currentUser" @submit="addNewComment" />
   </div>
 </template>
 
 <script>
 import CommentsFeedCard from '@/components/CommentsFeedCard'
 import CommentsFeedInput from '@/components/CommentsFeedInput'
+
+const getNextId = collection => {
+  return collection[collection.length - 1].id + 1
+}
 
 export default {
   name: 'CommentsFeed',
@@ -56,6 +60,20 @@ export default {
           'https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg',
       },
     }
+  },
+  methods: {
+    addNewComment({ comment, author }) {
+      const newComment = {
+        text: comment,
+        firstName: author.firstName,
+        lastName: author.lastName,
+        avatar: author.avatar,
+        createdAt: Date.now().toString(),
+        id: getNextId(this.comments),
+      }
+
+      this.comments.push(newComment)
+    },
   },
 }
 </script>
