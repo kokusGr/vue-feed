@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div class="header">
-      <img :src="comment.avatar" :alt="fullName" class="avatar" />
+      <CommentsFeedAvatar :url="comment.avatar" :alt="fullName" />
       <div class="header-text-container">
         <div class="username">{{ fullName }}</div>
         <div class="time">{{ comment.createdAt }}</div>
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import CommentsFeedAvatar from '@/components/CommentsFeedAvatar'
+
 export default {
   name: 'CommentsFeedCard',
   props: {
@@ -34,6 +36,9 @@ export default {
       return `${this.comment.firstName} ${this.comment.lastName}`
     },
   },
+  components: {
+    CommentsFeedAvatar,
+  },
 }
 </script>
 
@@ -48,11 +53,6 @@ export default {
   display: flex;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.16);
-}
-.avatar {
-  height: 56px;
-  width: 56px;
-  border-radius: 100%;
 }
 .header-text-container {
   margin-left: 20px;
