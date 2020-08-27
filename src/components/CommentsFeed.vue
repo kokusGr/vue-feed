@@ -1,6 +1,11 @@
 <template>
   <div>
-    <CommentsFeedCard v-for="comment in comments" :key="comment.id" :comment="comment" />
+    <CommentsFeedCard
+      v-for="(comment, index) in comments"
+      :key="comment.id"
+      :comment="comment"
+      :class="{ withMargin: index !== comments.length - 1 }"
+    />
   </div>
 </template>
 
@@ -42,5 +47,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+.withMargin {
+  margin-bottom: 12px;
+}
 </style>
