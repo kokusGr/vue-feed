@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <CommentsFeedCardContainer>
     <div class="header">
       <CommentsFeedAvatar :url="comment.avatar" :alt="fullName" />
       <div class="header-text-container">
@@ -8,11 +8,12 @@
       </div>
     </div>
     <div class="body">{{ comment.text }}</div>
-  </div>
+  </CommentsFeedCardContainer>
 </template>
 
 <script>
 import CommentsFeedAvatar from '@/components/CommentsFeedAvatar'
+import CommentsFeedCardContainer from '@/components/CommentsFeedCardContainer'
 
 export default {
   name: 'CommentsFeedCard',
@@ -38,17 +39,12 @@ export default {
   },
   components: {
     CommentsFeedAvatar,
+    CommentsFeedCardContainer,
   },
 }
 </script>
 
 <style scoped lang="scss">
-.root {
-  background-color: $surface;
-  padding: 28px;
-  width: 600px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
 .header {
   display: flex;
   padding-bottom: 16px;
