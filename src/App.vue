@@ -23,8 +23,18 @@ html {
 *:after {
   box-sizing: inherit;
 }
-body {
+body,
+textarea,
+button {
   margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  background: none;
+}
+textarea,
+button {
+  font-family: inherit;
 }
 #app {
   min-height: 100vh;

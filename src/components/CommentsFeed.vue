@@ -7,13 +7,15 @@
       :class="{ 'with-margin': index !== comments.length - 1 }"
     />
     <div class="spacer"></div>
-    <CommentsFeedInput :user="currentUser" @submit="addNewComment" />
+    <CommentsFeedInput v-model="newComment" :user="currentUser" @submit="addNewComment" />
   </div>
 </template>
 
 <script>
 import CommentsFeedCard from '@/components/CommentsFeedCard'
 import CommentsFeedInput from '@/components/CommentsFeedInput'
+
+import Api from '@/api'
 
 const getNextId = collection => {
   return collection[collection.length - 1].id + 1
@@ -27,30 +29,7 @@ export default {
   },
   data() {
     return {
-      comments: [
-        {
-          id: 1,
-          text:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500",
-          createdAt: '2020-08-11 07:54:03',
-          email: 'george.bluth@reqres.in',
-          firstName: 'George',
-          lastName: 'Bluth',
-          avatar:
-            'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg',
-        },
-        {
-          id: 2,
-          text:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.',
-          createdAt: '2020-08-10 09:31:12',
-          email: 'janet.weaver@reqres.in',
-          firstName: 'Janet',
-          lastName: 'Weaver',
-          avatar:
-            'https://s3.amazonaws.com/uifaces/faces/twitter/josephstein/128.jpg',
-        },
-      ],
+      comments: [],
       currentUser: {
         id: 3,
         email: 'emma.wong@reqres.in',
@@ -59,7 +38,12 @@ export default {
         avatar:
           'https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg',
       },
+      newComment: '',
     }
+  },
+  async created() {
+    const comments = await Api.getComments()
+    this.comments = comments
   },
   methods: {
     addNewComment({ comment, author }) {

@@ -2,10 +2,16 @@
   <CommentsFeedCardContainer>
     <div class="input-container">
       <CommentsFeedAvatar :url="user.avatar" :alt="fullName" />
-      <TextareaAutosize v-model="newComment" class="input" :max-height="200" />
-      <button @click="handleSubmit" class="button">
-        Opublikuj
-      </button>
+      <TextareaAutosize
+        :value="value"
+        :rows="1"
+        placeholder="Add new comment…"
+        @input="handleInput"
+        class="input"
+        :max-height="200"
+        :min-height="20"
+      />
+      <button @click="handleSubmit" class="button">Opublikuj</button>
     </div>
   </CommentsFeedCardContainer>
 </template>
@@ -32,11 +38,10 @@ export default {
         )
       },
     },
-  },
-  data() {
-    return {
-      newComment: '',
-    }
+    value: {
+      type: String,
+      required: true,
+    },
   },
   computed: {
     fullName: function getFullName() {
@@ -45,8 +50,10 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.$emit('submit', { comment: this.newComment, author: this.user })
-      this.newComment = ''
+      this.$emit('submit', { comment: this.value, author: this.user })
+    },
+    handleInput(value) {
+      this.$emit('input', value)
     },
   },
 }
@@ -60,20 +67,21 @@ export default {
 }
 .input {
   flex: 1;
-  padding-right: 16px;
-  padding-left: 22px;
-  font-size: 1.1rem;
+  padding: 12px 8px;
+  margin-right: 24px;
+  margin-left: 30px;
+  font-size: 1rem;
   line-height: 1.55;
-  border: none;
+  border-bottom: 1px solid $background;
+}
+.input::placeholder {
+  color: $onSurfaceSecondary;
 }
 .button {
-  background: none;
-  border: none;
   color: $primary;
   font-size: 1.1rem;
   cursor: pointer;
   padding: 12px 6px;
-  outline: none;
   overflow: hidden;
   position: relative;
   border-radius: 4px;
