@@ -1,33 +1,37 @@
 <template>
   <div class="root">
     <div class="header">
-      <img :src="avatar" :alt="fullName" class="avatar" />
+      <img :src="comment.avatar" :alt="fullName" class="avatar" />
       <div class="header-text-container">
         <div class="username">{{ fullName }}</div>
-        <div class="time">{{ createdAt }}</div>
+        <div class="time">{{ comment.createdAt }}</div>
       </div>
     </div>
-    <div class="body">{{ text }}</div>
+    <div class="body">{{ comment.text }}</div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'CommentsFeedCard',
-  data() {
-    return {
-      avatar:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg',
-      firstName: 'George',
-      lastName: 'Bluth',
-      text:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500",
-      createdAt: '2020-08-11 07:54:03',
-    }
+  props: {
+    comment: {
+      required: true,
+      type: Object,
+      validator: function validateComment(comment) {
+        return (
+          typeof comment.text === 'string' &&
+          typeof comment.createdAt === 'string' &&
+          typeof comment.firstName === 'string' &&
+          typeof comment.lastName === 'string' &&
+          typeof comment.avatar === 'string'
+        )
+      },
+    },
   },
   computed: {
     fullName: function getFullName() {
-      return `${this.firstName} ${this.lastName}`
+      return `${this.comment.firstName} ${this.comment.lastName}`
     },
   },
 }
