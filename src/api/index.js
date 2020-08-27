@@ -45,6 +45,7 @@ const deserializeUser = rawUser => ({
   firstName: rawUser.first_name,
   lastName: rawUser.last_name,
   avatar: rawUser.avatar,
+  fullName: `${rawUser.first_name} ${rawUser.last_name}`,
 })
 
 const getUsers = async () => {

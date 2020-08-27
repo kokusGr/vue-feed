@@ -1,19 +1,32 @@
 <template>
-  <CommentsFeedCardContainer>
-    <div class="input-container">
-      <CommentsFeedAvatar :url="user.avatar" :alt="fullName" />
-      <TextareaAutosize
-        :value="value"
-        :rows="1"
-        placeholder="Add new comment…"
-        @input="handleInput"
-        class="input"
-        :max-height="200"
-        :min-height="20"
-      />
-      <button @click="handleSubmit" :disabled="!value" class="button">Opublikuj</button>
+  <div class="comments-feed-input-wrapper">
+    <div v-if="usersForMention" class="mentions-list">
+      <div
+        v-for="(user, index) in usersForMention"
+        :key="user.id"
+        :class="['mentions-list-item', { 'mentions-list-item--last': index === usersForMention.length - 1 }]"
+      >
+        <CommentsFeedAvatar class="mention-avatar" :url="user.avatar" :alt="user.fullName" />
+        <span class="mention-username">{{ user.fullName }}</span>
+      </div>
     </div>
-  </CommentsFeedCardContainer>
+    <CommentsFeedCardContainer>
+      <div class="input-container">
+        <CommentsFeedAvatar :url="user.avatar" :alt="user.fullName" />
+        <TextareaAutosize
+          :value="value"
+          :rows="1"
+          placeholder="Add new comment…"
+          @input="handleInput"
+          @keydown.native="handleKeyDown"
+          class="input"
+          :max-height="200"
+          :min-height="20"
+        />
+        <button @click="handleSubmit" :disabled="!value" class="button">Opublikuj</button>
+      </div>
+    </CommentsFeedCardContainer>
+  </div>
 </template>
 
 <script>
@@ -32,9 +45,7 @@ export default {
       required: true,
       validator: function validateUser(user) {
         return (
-          typeof user.avatar === 'string' &&
-          typeof user.firstName === 'string' &&
-          typeof user.lastName === 'string'
+          typeof user.avatar === 'string' && typeof user.fullName === 'string'
         )
       },
     },
@@ -42,10 +53,34 @@ export default {
       type: String,
       required: true,
     },
+    users: {
+      type: Array,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      showMention: false,
+    }
   },
   computed: {
-    fullName: function getFullName() {
-      return `${this.user.firstName} ${this.user.lastName}`
+    mentionQuery: function getMentionQuery() {
+      if (!this.showMention) {
+        return ''
+      }
+
+      const parts = this.value.split('@')
+
+      return parts.length > 1 ? parts.pop() : ''
+    },
+    usersForMention: function getUsersForMention() {
+      if (!this.mentionQuery) {
+        return null
+      }
+
+      return this.users.filter(user =>
+        user.fullName.startsWith(this.mentionQuery),
+      )
     },
   },
   methods: {
@@ -55,11 +90,19 @@ export default {
     handleInput(value) {
       this.$emit('input', value)
     },
+    handleKeyDown({ key }) {
+      if (key === '@') {
+        this.showMention = true
+      }
+    },
   },
 }
 </script>
 
 <style scoped lang="scss">
+.comments-feed-input-wrapper {
+  position: relative;
+}
 .input-container {
   display: flex;
   flex-direction: row;
@@ -107,5 +150,39 @@ export default {
 .button:disabled {
   color: $onSurfaceSecondary;
   cursor: not-allowed;
+}
+.mentions-list {
+  position: absolute;
+  top: -20px;
+  left: 28px;
+  right: 28px;
+  padding: 20px 0;
+  transform: translateY(-100%);
+  max-height: 400px;
+  overflow-y: scroll;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+  background: $surface;
+}
+.mentions-list-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px 28px;
+
+  &:hover {
+    background-color: rgba($primary, 0.4);
+  }
+
+  &--last {
+    margin-bottom: 0;
+  }
+}
+.mention-username {
+  margin-left: 12px;
+  font-size: 0.9rem;
+}
+.mention-avatar {
+  height: 40px;
+  width: 40px;
 }
 </style>

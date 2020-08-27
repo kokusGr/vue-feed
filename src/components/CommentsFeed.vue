@@ -7,7 +7,13 @@
       :class="{ 'with-margin': index !== comments.length - 1 }"
     />
     <div class="spacer"></div>
-    <CommentsFeedInput v-model="newComment" :user="currentUser" @submit="addNewComment" />
+    <CommentsFeedInput
+      v-if="currentUser"
+      v-model="newComment"
+      :user="currentUser"
+      :users="users"
+      @submit="addNewComment"
+    />
   </div>
 </template>
 
@@ -30,20 +36,22 @@ export default {
   data() {
     return {
       comments: [],
-      currentUser: {
-        id: 3,
-        email: 'emma.wong@reqres.in',
-        firstName: 'Emma',
-        lastName: 'Wong',
-        avatar:
-          'https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg',
-      },
+      users: [],
       newComment: '',
     }
   },
   async created() {
-    const comments = await Api.getComments()
+    const [comments, users] = await Promise.all([
+      Api.getComments(),
+      Api.getUsers(),
+    ])
     this.comments = comments
+    this.users = users
+  },
+  computed: {
+    currentUser: function getCurrentUser() {
+      return this.users[0]
+    },
   },
   methods: {
     async addNewComment({ comment, author }) {
