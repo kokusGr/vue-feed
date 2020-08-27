@@ -11,7 +11,7 @@
         :max-height="200"
         :min-height="20"
       />
-      <button @click="handleSubmit" class="button">Opublikuj</button>
+      <button @click="handleSubmit" :disabled="!value" class="button">Opublikuj</button>
     </div>
   </CommentsFeedCardContainer>
 </template>
@@ -103,5 +103,9 @@ export default {
   margin: 0;
   opacity: 1;
   transition: 0s;
+}
+.button:disabled {
+  color: $onSurfaceSecondary;
+  cursor: not-allowed;
 }
 </style>

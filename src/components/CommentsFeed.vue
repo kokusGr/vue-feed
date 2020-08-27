@@ -46,17 +46,23 @@ export default {
     this.comments = comments
   },
   methods: {
-    addNewComment({ comment, author }) {
-      const newComment = {
-        text: comment,
-        firstName: author.firstName,
-        lastName: author.lastName,
-        avatar: author.avatar,
-        createdAt: Date.now().toString(),
-        id: getNextId(this.comments),
-      }
+    async addNewComment({ comment, author }) {
+      if (comment) {
+        const newComment = {
+          text: comment,
+          firstName: author.firstName,
+          lastName: author.lastName,
+          avatar: author.avatar,
+          createdAt: Date.now().toString(),
+          id: getNextId(this.comments),
+        }
 
-      this.comments.push(newComment)
+        const response = await Api.addComment(newComment)
+        if (response.ok) {
+          this.comments.push(newComment)
+          this.newComment = ''
+        }
+      }
     },
   },
 }
