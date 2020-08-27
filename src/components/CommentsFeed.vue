@@ -1,20 +1,25 @@
 <template>
-  <div>
+  <div class="comments-feed">
     <CommentsFeedCard
       v-for="(comment, index) in comments"
       :key="comment.id"
       :comment="comment"
-      :class="{ withMargin: index !== comments.length - 1 }"
+      :class="{ 'with-margin': index !== comments.length - 1 }"
     />
+    <div class="spacer"></div>
+    <CommentsFeedInput :user="currentUser" />
   </div>
 </template>
 
 <script>
 import CommentsFeedCard from '@/components/CommentsFeedCard'
+import CommentsFeedInput from '@/components/CommentsFeedInput'
+
 export default {
   name: 'CommentsFeed',
   components: {
     CommentsFeedCard,
+    CommentsFeedInput,
   },
   data() {
     return {
@@ -42,13 +47,29 @@ export default {
             'https://s3.amazonaws.com/uifaces/faces/twitter/josephstein/128.jpg',
         },
       ],
+      currentUser: {
+        id: 3,
+        email: 'emma.wong@reqres.in',
+        firstName: 'Emma',
+        lastName: 'Wong',
+        avatar:
+          'https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg',
+      },
     }
   },
 }
 </script>
 
 <style scoped lang="scss">
-.withMargin {
+.comments-feed {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.with-margin {
   margin-bottom: 12px;
+}
+.spacer {
+  flex: 1 1 20px;
 }
 </style>

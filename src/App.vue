@@ -28,7 +28,7 @@ body {
 }
 #app {
   min-height: 100vh;
-  padding-top: 40px;
+  padding: 40px 0;
   background-color: $background;
   display: flex;
   flex-direction: column;

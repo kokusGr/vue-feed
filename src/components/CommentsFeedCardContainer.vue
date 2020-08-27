@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <div class="comments-feed-card-container">
     <slot></slot>
   </div>
 </template>
@@ -11,10 +11,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.root {
+.comments-feed-card-container {
   background-color: $surface;
   padding: 28px;
   width: 600px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  flex: 0;
 }
 </style>
