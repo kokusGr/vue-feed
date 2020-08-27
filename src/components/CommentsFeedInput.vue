@@ -1,8 +1,9 @@
 <template>
   <div class="comments-feed-input-wrapper">
-    <div v-if="usersForMention" class="mentions-list">
+    <div v-if="usersForMention.length > 0" class="mentions-list">
       <div
         v-for="(user, index) in usersForMention"
+        @click="selectMention(user.fullName)"
         :key="user.id"
         :class="['mentions-list-item', { 'mentions-list-item--last': index === usersForMention.length - 1 }]"
       >
@@ -19,6 +20,7 @@
           placeholder="Add new comment…"
           @input="handleInput"
           @keydown.native="handleKeyDown"
+          ref="commentInput"
           class="input"
           :max-height="200"
           :min-height="20"
@@ -32,6 +34,8 @@
 <script>
 import CommentsFeedAvatar from '@/components/CommentsFeedAvatar'
 import CommentsFeedCardContainer from '@/components/CommentsFeedCardContainer'
+
+const lastMentionRegex = /(^.*@)(.*$)/
 
 export default {
   name: 'CommentsFeedInput',
@@ -75,7 +79,7 @@ export default {
     },
     usersForMention: function getUsersForMention() {
       if (!this.mentionQuery) {
-        return null
+        return []
       }
 
       return this.users.filter(user =>
@@ -94,6 +98,15 @@ export default {
       if (key === '@') {
         this.showMention = true
       }
+    },
+    selectMention(username) {
+      const valueWithMention = this.value.replace(
+        lastMentionRegex,
+        `$1${username}`,
+      )
+      this.$emit('input', valueWithMention)
+      this.showMention = false
+      this.$refs.commentInput.$el.focus()
     },
   },
 }
