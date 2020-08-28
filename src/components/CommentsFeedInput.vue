@@ -139,7 +139,10 @@ export default {
       this.$emit('input', value)
     },
     handleKeyDown({ key }) {
-      if (['ArrowUp', 'ArrowDown', 'Enter'].includes(key)) {
+      if (
+        ['ArrowUp', 'ArrowDown', 'Enter'].includes(key) &&
+        this.usersForMention.length > 1
+      ) {
         event.preventDefault()
         this.handleNavigationKey(key)
       }
