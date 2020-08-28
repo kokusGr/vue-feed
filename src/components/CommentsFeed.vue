@@ -6,7 +6,7 @@
       :comment="comment"
       :class="{ 'with-margin': index !== comments.length - 1 }"
     />
-    <div class="spacer"></div>
+    <div class="spacer" />
     <CommentsFeedInput
       v-if="currentUser"
       v-model="newComment"
@@ -40,6 +40,11 @@ export default {
       newComment: '',
     }
   },
+  computed: {
+    currentUser: function getCurrentUser() {
+      return this.users[0]
+    },
+  },
   async created() {
     const [comments, users] = await Promise.all([
       Api.getComments(),
@@ -47,11 +52,6 @@ export default {
     ])
     this.comments = comments
     this.users = users
-  },
-  computed: {
-    currentUser: function getCurrentUser() {
-      return this.users[0]
-    },
   },
   methods: {
     async addNewComment({ comment, author }) {

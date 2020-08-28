@@ -1,6 +1,6 @@
 <template>
   <div class="comments-feed-card-container">
-    <slot></slot>
+    <slot />
   </div>
 </template>
 

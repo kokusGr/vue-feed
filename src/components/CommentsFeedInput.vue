@@ -3,24 +3,24 @@
     <CommentsFeedInputMentionsList
       v-if="usersForMention.length > 0"
       :users="usersForMention"
-      :focusedMentionIndex="focusedMentionIndex"
+      :focused-mention-index="focusedMentionIndex"
       @mention-clicked="selectMention"
     />
     <CommentsFeedCardContainer>
       <div class="input-container">
         <CommentsFeedAvatar :url="user.avatar" :alt="user.fullName" class="input-avatar" />
         <TextareaAutosize
+          ref="commentInput"
           :value="value"
           :rows="1"
           placeholder="Add new comment…"
-          @input.native="handleInput"
-          @keydown.native="handleKeyDown"
-          ref="commentInput"
           class="input"
           :max-height="200"
           :min-height="20"
+          @input.native="handleInput"
+          @keydown.native="handleKeyDown"
         />
-        <button @click="handleSubmit" :disabled="!value" class="button">Opublikuj</button>
+        <button :disabled="!value" class="button" @click="handleSubmit">Opublikuj</button>
       </div>
     </CommentsFeedCardContainer>
   </div>

@@ -3,9 +3,9 @@
     <div
       v-for="(user, index) in users"
       ref="mentionListItems"
-      @click="$emit('mention-clicked', user)"
       :key="user.id"
       :class="['mentions-list-item', { 'mentions-list-item--last': index === users.length - 1, 'mentions-list-item--focused': index === focusedMentionIndex }]"
+      @click="$emit('mention-clicked', user)"
     >
       <CommentsFeedAvatar class="mention-avatar" :url="user.avatar" :alt="user.fullName" />
       <span class="mention-username">{{ user.fullName }}</span>
@@ -18,6 +18,9 @@ import CommentsFeedAvatar from '@/components/CommentsFeedAvatar'
 
 export default {
   name: 'CommentsFeedInputMentionsList',
+  components: {
+    CommentsFeedAvatar,
+  },
   props: {
     users: {
       type: Array,
@@ -25,6 +28,7 @@ export default {
     },
     focusedMentionIndex: {
       type: Number,
+      default: null,
     },
   },
   watch: {
@@ -35,9 +39,6 @@ export default {
         })
       }
     },
-  },
-  components: {
-    CommentsFeedAvatar,
   },
 }
 </script>

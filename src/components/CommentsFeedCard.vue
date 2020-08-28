@@ -17,6 +17,10 @@ import CommentsFeedCardContainer from '@/components/CommentsFeedCardContainer'
 
 export default {
   name: 'CommentsFeedCard',
+  components: {
+    CommentsFeedAvatar,
+    CommentsFeedCardContainer,
+  },
   props: {
     comment: {
       required: true,
@@ -36,10 +40,6 @@ export default {
     fullName: function getFullName() {
       return `${this.comment.firstName} ${this.comment.lastName}`
     },
-  },
-  components: {
-    CommentsFeedAvatar,
-    CommentsFeedCardContainer,
   },
 }
 </script>
