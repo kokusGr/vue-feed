@@ -1,16 +1,11 @@
 <template>
   <div class="comments-feed-input-wrapper">
-    <div v-if="usersForMention.length > 0" class="mentions-list">
-      <div
-        v-for="(user, index) in usersForMention"
-        @click="selectMention(user.fullName)"
-        :key="user.id"
-        :class="['mentions-list-item', { 'mentions-list-item--last': index === usersForMention.length - 1 }]"
-      >
-        <CommentsFeedAvatar class="mention-avatar" :url="user.avatar" :alt="user.fullName" />
-        <span class="mention-username">{{ user.fullName }}</span>
-      </div>
-    </div>
+    <CommentsFeedInputMentionsList
+      v-if="usersForMention.length > 0"
+      :users="usersForMention"
+      :focusedMentionIndex="focusedMentionIndex"
+      @mention-clicked="selectMention"
+    />
     <CommentsFeedCardContainer>
       <div class="input-container">
         <CommentsFeedAvatar :url="user.avatar" :alt="user.fullName" />
@@ -18,7 +13,7 @@
           :value="value"
           :rows="1"
           placeholder="Add new comment…"
-          @input="handleInput"
+          @input="$emit('input', $event)"
           @keydown.native="handleKeyDown"
           ref="commentInput"
           class="input"
@@ -34,14 +29,38 @@
 <script>
 import CommentsFeedAvatar from '@/components/CommentsFeedAvatar'
 import CommentsFeedCardContainer from '@/components/CommentsFeedCardContainer'
+import CommentsFeedInputMentionsList from '@/components/CommentsFeedInputMentionsList'
 
 const lastMentionRegex = /(^.*@)(.*$)/
+
+const getNextIndex = (list, currentIndex, step) => {
+  if (list.length < 1) {
+    return null
+  }
+
+  if (currentIndex === null) {
+    return 0
+  }
+
+  const nextIndex = currentIndex + step
+
+  if (nextIndex > list.length - 1) {
+    return list.length - 1
+  }
+
+  if (nextIndex < 0) {
+    return 0
+  }
+
+  return nextIndex
+}
 
 export default {
   name: 'CommentsFeedInput',
   components: {
     CommentsFeedAvatar,
     CommentsFeedCardContainer,
+    CommentsFeedInputMentionsList,
   },
   props: {
     user: {
@@ -65,6 +84,7 @@ export default {
   data() {
     return {
       showMention: false,
+      focusedMentionIndex: null,
     }
   },
   computed: {
@@ -74,7 +94,6 @@ export default {
       }
 
       const parts = this.value.split('@')
-
       return parts.length > 1 ? parts.pop() : ''
     },
     usersForMention: function getUsersForMention() {
@@ -91,22 +110,55 @@ export default {
     handleSubmit() {
       this.$emit('submit', { comment: this.value, author: this.user })
     },
-    handleInput(value) {
-      this.$emit('input', value)
-    },
-    handleKeyDown({ key }) {
-      if (key === '@') {
-        this.showMention = true
+    handleNavigationKey(key) {
+      switch (key) {
+        case 'Enter': {
+          const focusedMention = this.usersForMention[this.focusedMentionIndex]
+          focusedMention && this.selectMention(focusedMention)
+          break
+        }
+        case 'ArrowDown': {
+          this.focusMention(1)
+          break
+        }
+        case 'ArrowUp': {
+          this.focusMention(-1)
+          break
+        }
+
+        default:
+          break
       }
     },
-    selectMention(username) {
+    handleKeyDown(event) {
+      const { key } = event
+      if (key === '@') {
+        this.showMention = true
+      } else if (['ArrowUp', 'ArrowDown', 'Enter'].includes(key)) {
+        event.preventDefault()
+        this.handleNavigationKey(key)
+      }
+    },
+    selectMention(user) {
       const valueWithMention = this.value.replace(
         lastMentionRegex,
-        `$1${username}`,
+        `$1${user.fullName}`,
       )
       this.$emit('input', valueWithMention)
       this.showMention = false
+      this.focusedMention = null
       this.$refs.commentInput.$el.focus()
+    },
+    focusMention(step) {
+      if (this.usersForMention.length < 1) {
+        return
+      }
+
+      this.focusedMentionIndex = getNextIndex(
+        this.usersForMention,
+        this.focusedMentionIndex,
+        step,
+      )
     },
   },
 }
@@ -163,39 +215,5 @@ export default {
 .button:disabled {
   color: $onSurfaceSecondary;
   cursor: not-allowed;
-}
-.mentions-list {
-  position: absolute;
-  top: -20px;
-  left: 28px;
-  right: 28px;
-  padding: 20px 0;
-  transform: translateY(-100%);
-  max-height: 400px;
-  overflow-y: scroll;
-  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
-  background: $surface;
-}
-.mentions-list-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  padding: 8px 28px;
-
-  &:hover {
-    background-color: rgba($primary, 0.4);
-  }
-
-  &--last {
-    margin-bottom: 0;
-  }
-}
-.mention-username {
-  margin-left: 12px;
-  font-size: 0.9rem;
-}
-.mention-avatar {
-  height: 40px;
-  width: 40px;
 }
 </style>
