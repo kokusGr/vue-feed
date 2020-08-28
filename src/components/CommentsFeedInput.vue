@@ -8,12 +8,12 @@
     />
     <CommentsFeedCardContainer>
       <div class="input-container">
-        <CommentsFeedAvatar :url="user.avatar" :alt="user.fullName" />
+        <CommentsFeedAvatar :url="user.avatar" :alt="user.fullName" class="input-avatar" />
         <TextareaAutosize
           :value="value"
           :rows="1"
           placeholder="Add new comment…"
-          @input="$emit('input', $event)"
+          @input.native="handleInput"
           @keydown.native="handleKeyDown"
           ref="commentInput"
           class="input"
@@ -94,7 +94,7 @@ export default {
       }
 
       const parts = this.value.split('@')
-      return parts.length > 1 ? parts.pop() : ''
+      return parts.length > 1 ? parts.pop().toLowerCase() : ''
     },
     usersForMention: function getUsersForMention() {
       if (!this.mentionQuery) {
@@ -102,7 +102,7 @@ export default {
       }
 
       return this.users.filter(user =>
-        user.fullName.startsWith(this.mentionQuery),
+        user.fullName.toLowerCase().startsWith(this.mentionQuery),
       )
     },
   },
@@ -130,11 +130,16 @@ export default {
           break
       }
     },
-    handleKeyDown(event) {
-      const { key } = event
-      if (key === '@') {
+    handleInput(event) {
+      const { value } = event.target
+      const lastCharacter = value[value.length - 1]
+      if (lastCharacter === '@') {
         this.showMention = true
-      } else if (['ArrowUp', 'ArrowDown', 'Enter'].includes(key)) {
+      }
+      this.$emit('input', value)
+    },
+    handleKeyDown({ key }) {
+      if (['ArrowUp', 'ArrowDown', 'Enter'].includes(key)) {
         event.preventDefault()
         this.handleNavigationKey(key)
       }
@@ -172,6 +177,10 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+  }
 }
 .input {
   flex: 1;
@@ -181,9 +190,19 @@ export default {
   font-size: 1rem;
   line-height: 1.55;
   border-bottom: 1px solid $background;
+
+  @media (max-width: 560px) {
+    margin: 0;
+    width: 100%;
+  }
 }
 .input::placeholder {
   color: $onSurfaceSecondary;
+}
+.input-avatar {
+  @media (max-width: 560px) {
+    display: none;
+  }
 }
 .button {
   color: $primary;
@@ -193,6 +212,11 @@ export default {
   overflow: hidden;
   position: relative;
   border-radius: 4px;
+
+  @media (max-width: 560px) {
+    margin-left: auto;
+    margin-top: 14px;
+  }
 }
 .button:after {
   content: '';
